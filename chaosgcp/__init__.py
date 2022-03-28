@@ -63,10 +63,11 @@ def load_credentials(secrets: Secrets = None):
     """
     Load GCP credentials from the experiment secrets
 
-    To authenticate, you need to create a service account manually and either
-    pass the filename or the content of the file into the `secrets` object.
+    To authenticate, you need to:
+        * create a service account manually and either pass the filename or the content of the file into the `secrets` object.
+        * inherit from the default service account on the container (e.g. in kubernetes)
 
-    So, in the experiment, use one of the followings:
+    So, in the experiment, if you want to use a manual service account, use one of the followings:
 
     ```json
     {
@@ -125,9 +126,6 @@ def load_credentials(secrets: Secrets = None):
         logger.debug("Using GCP credentials embedded into secrets")
         credentials = Credentials.from_service_account_info(
             service_account_info)
-    else:
-        raise FailedActivity(
-            "missing GCP credentials settings in secrets of this activity")
 
     if credentials is not None and credentials.expired:
         logger.debug("GCP credentials need to be refreshed as they expired")
